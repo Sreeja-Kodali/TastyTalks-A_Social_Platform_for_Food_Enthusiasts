@@ -1,0 +1,8 @@
+DELETE FROM follows;
+DELETE FROM bookmarks;
+DELETE FROM comments;
+DELETE FROM ratings;
+DELETE FROM recipes;
+DELETE FROM users;
+
+ALTER TABLE users AUTO_INCREMENT = 1;

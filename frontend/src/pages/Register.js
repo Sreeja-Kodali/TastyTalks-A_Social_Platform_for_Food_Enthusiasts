@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 import { User, Mail, Lock, UserPlus } from 'lucide-react';
 
 const Register = () => {
@@ -13,8 +14,10 @@ const Register = () => {
     role: 'FOODIE'
   });
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
   const navigate = useNavigate();
+  const { register } = useAuth();
+  const API_BASE_URL = "http://localhost:8081";
+  // const API_BASE_URL = "https://tastytalks-a-social-platform-for-food.onrender.com";
 
   const handleChange = (e) => {
     setFormData({
@@ -39,11 +42,28 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await register(formData.username, formData.email, formData.password, formData.role);
+      console.log("REGISTER PAYLOAD:", {
+        username: formData.username.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        role: formData.role
+      });
+
+      await register(formData.username.trim(), formData.email.trim(), formData.password, formData.role);
+
+      console.log("REGISTER RESPONSE: success");
+
       toast.success('Account created successfully!');
       navigate('/login');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      console.error("REGISTER ERROR:", error.response?.data || error);
+
+      toast.error(
+        error.response?.data?.message ||
+        error.response?.data ||
+        error.message ||
+        "Registration failed"
+      );
     } finally {
       setLoading(false);
     }

@@ -1,9 +1,8 @@
 import axios from 'axios';
-
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+import { API_BASE_URL } from '../utils/constants';
 
 const api = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: `${API_BASE_URL}/api`,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -27,8 +26,16 @@ api.interceptors.request.use(
 
 // Authentication APIs
 export const authAPI = {
-  register: (data) => axios.post(`${API_URL}/auth/register`, data),
-  login: (data) => axios.post(`${API_URL}/auth/login`, data),
+  register: (data) => axios.post(`${API_BASE_URL}/auth/register`, data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }),
+  login: (data) => axios.post(`${API_BASE_URL}/auth/login`, data, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }),
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

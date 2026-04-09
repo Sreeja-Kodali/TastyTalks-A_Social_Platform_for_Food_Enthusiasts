@@ -9,10 +9,19 @@ import {
 } from 'lucide-react';
 
 const Navbar = () => {
-  const { user, logout, isAdmin, isChef } = useAuth();
+  const { user, logout, token } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Use AuthContext for authentication check
+  const isAuthenticated = !!token && !!user && !!user.id;
+  const isChef = user?.role === "CHEF" || user?.role === "ADMIN";
+  const isAdmin = user?.role === "ADMIN";
+
+  console.log("Navbar - user:", user);
+  console.log("Navbar - token:", token);
+  console.log("Navbar - isAuthenticated:", isAuthenticated);
 
   const handleLogout = () => {
     logout();
@@ -20,11 +29,12 @@ const Navbar = () => {
   };
 
   const handleGoToProfile = () => {
-    const currentUser = JSON.parse(localStorage.getItem('user'));
-    if (currentUser?.id) {
-      navigate(`/profile/${currentUser.id}`);
-    } else if (user?.id) {
+    console.log("Navbar handleGoToProfile - user:", user);
+    if (user?.id) {
       navigate(`/profile/${user.id}`);
+    } else {
+      console.log("Navbar handleGoToProfile - no user id, redirecting to login");
+      navigate('/login');
     }
   };
 
@@ -58,7 +68,7 @@ const Navbar = () => {
             </Link>
             
             {/* Authenticated-only items */}
-            {user && (
+            {isAuthenticated && (
               <>
                 <Link 
                   to="/chat" 
@@ -100,7 +110,7 @@ const Navbar = () => {
               {isDark ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-gray-700" />}
             </button>
 
-            {user ? (
+            {isAuthenticated ? (
               <>
                 {/* Notifications */}
                 <Link 
@@ -133,7 +143,7 @@ const Navbar = () => {
                   <button className="flex items-center space-x-2">
                     <Avatar 
                       user={user}
-                      username={user.username}
+                      username={user?.username}
                       size="md"
                     />
                   </button>
@@ -205,7 +215,7 @@ const Navbar = () => {
             </Link>
             
             {/* Authenticated-only mobile items */}
-            {user && (
+            {isAuthenticated && (
               <>
                 <Link 
                   to="/chat" 
@@ -284,7 +294,7 @@ const Navbar = () => {
                 </button>
               </>
             )}
-            {!user && (
+            {!isAuthenticated && (
               <div className="flex flex-col space-y-2 pt-2">
                 <Link 
                   to="/login"

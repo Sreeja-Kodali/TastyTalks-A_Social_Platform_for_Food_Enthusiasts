@@ -1,11 +1,14 @@
 package com.prk.tastytalks_backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import com.prk.tastytalks_backend.dto.RecipeDTO;
 import com.prk.tastytalks_backend.entity.Recipe;
@@ -31,11 +34,16 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}")
-    public Map<String, Object> getRecipe(@PathVariable Long id){
+    public ResponseEntity<?> getRecipe(@PathVariable Long id){
         Recipe recipe = recipeService.getRecipeById(id);
+        if (recipe == null) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Recipe not found with id: " + id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
         Map<String, Object> response = new HashMap<>();
         response.put("data", DTOMapper.toRecipeDTO(recipe));
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/trending")
@@ -83,9 +91,13 @@ public class RecipeController {
 
     @PostMapping("/{id}/like")
     public Map<String, Object> likeRecipe(@PathVariable Long id){
-        recipeService.likeRecipe(id);
+        Recipe recipe = recipeService.likeRecipe(id);
         Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
+        if (recipe != null) {
+            response.put("data", recipe.getLikes());
+        } else {
+            response.put("data", new ArrayList<>());
+        }
         return response;
     }
 

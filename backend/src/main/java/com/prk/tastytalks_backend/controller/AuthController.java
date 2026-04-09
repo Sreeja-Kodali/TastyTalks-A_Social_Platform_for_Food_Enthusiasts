@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.Map;
 import com.prk.tastytalks_backend.dto.LoginRequest;
+import com.prk.tastytalks_backend.dto.LoginResponse;
 import com.prk.tastytalks_backend.dto.RegisterRequest;
 import com.prk.tastytalks_backend.dto.UserDTO;
 import com.prk.tastytalks_backend.entity.User;
@@ -15,9 +17,9 @@ import com.prk.tastytalks_backend.security.JwtUtils;
 import com.prk.tastytalks_backend.security.CustomUserDetails;
 import com.prk.tastytalks_backend.service.AuthService;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     @Autowired
@@ -33,14 +35,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        System.out.println("LOGIN REQUEST EMAIL: " + request.getEmail());
+        
         User user = authService.login(request.getEmail(), request.getPassword());
         String token = jwtUtils.generateToken(user.getEmail());
         UserDTO userDTO = DTOMapper.toUserDTO(user);
-        return ResponseEntity.ok(Map.of(
-            "token", token,
-            "user", userDTO
-        ));
+        
+        LoginResponse response = new LoginResponse(token, userDTO);
+        System.out.println("LOGIN RESPONSE TOKEN: " + token);
+        System.out.println("LOGIN RESPONSE USER: " + userDTO.getUsername());
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("Backend auth working");
     }
 
     @GetMapping("/me")

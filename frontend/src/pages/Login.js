@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, LogIn } from 'lucide-react';
 
 const Login = () => {
@@ -10,8 +11,10 @@ const Login = () => {
     password: ''
   });
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const API_BASE_URL = "http://localhost:8081";
+  // const API_BASE_URL = "https://tastytalks-a-social-platform-for-food.onrender.com";
 
   const handleChange = (e) => {
     setFormData({
@@ -22,20 +25,47 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      email: formData.email.trim(),
+      password: formData.password
+    };
+
+    console.log("LOGIN PAYLOAD:", payload);
+
     setLoading(true);
 
     try {
-      const userData = await login(formData.email, formData.password);
-      toast.success('Welcome back!');
-      
-      // Redirect based on role
-      if (userData.role === 'ADMIN') {
-        navigate('/admin');
+      const user = await login(formData.email.trim(), formData.password);
+
+      console.log("LOGIN SUCCESS - USER:", user);
+      console.log("LOGIN SUCCESS - TOKEN:", localStorage.getItem('token'));
+
+      toast.success("Login successful");
+
+      if (user?.role === "ADMIN") {
+        navigate("/admin");
       } else {
-        navigate('/');
+        navigate("/");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      console.error("LOGIN ERROR:", error);
+      console.error("LOGIN RESPONSE:", error.response?.data);
+
+      alert(
+        JSON.stringify(
+          error.response?.data || error.message || "Login failed",
+          null,
+          2
+        )
+      );
+
+      toast.error(
+        error.response?.data?.message ||
+        error.response?.data ||
+        error.message ||
+        "Login failed"
+      );
     } finally {
       setLoading(false);
     }

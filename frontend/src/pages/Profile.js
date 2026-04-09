@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { userAPI, recipeAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Avatar from '../components/ui/Avatar';
@@ -9,39 +9,30 @@ import toast from 'react-hot-toast';
 import { Users, BookMarked, Award, TrendingUp, UserPlus, UserMinus } from 'lucide-react';
 
 const Profile = () => {
-  const { id } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { user: currentUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'recipes');
+  const [activeTab, setActiveTab] = useState('recipes');
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-    fetchProfile();
-  }, [id]);
+    const user = JSON.parse(localStorage.getItem('user'));
+    const id = user?.id;
 
-  useEffect(() => {
-    if (activeTab === 'bookmarks' && currentUser && id === currentUser.id) {
-      fetchBookmarks();
+    console.log(user);
+
+    if (!id) {
+      navigate('/login');
+      return;
     }
-  }, [activeTab, id, currentUser]);
 
-  useEffect(() => {
-    // Set default active tab based on role when profile loads
-    if (profile) {
-      const isChef = profile.role === "CHEF";
-      const defaultTab = isChef ? 'recipes' : 'bookmarks';
-      if (!activeTab || activeTab === searchParams.get('tab')) {
-        setActiveTab(defaultTab);
-      }
-    }
-  }, [profile, activeTab, searchParams]);
+    fetchProfile(id);
+  }, []);
 
-  const fetchProfile = async () => {
+  const fetchProfile = async (id) => {
     try {
       const response = await userAPI.getProfile(id);
       setProfile(response.data.data.user);
@@ -62,7 +53,7 @@ const Profile = () => {
 
   const fetchBookmarks = async () => {
     try {
-      const response = await userAPI.getBookmarks(id);
+      const response = await userAPI.getBookmarks(profile.id);
       setBookmarks(response.data.data);
     } catch (error) {
       console.error('Error fetching bookmarks:', error);
@@ -71,7 +62,7 @@ const Profile = () => {
 
   const handleFollow = async () => {
     try {
-      await userAPI.follow(id);
+      await userAPI.follow(profile.id);
       setIsFollowing(!isFollowing);
       setProfile({
         ...profile,
@@ -85,10 +76,25 @@ const Profile = () => {
     }
   };
 
+  useEffect(() => {
+    if (activeTab === 'bookmarks' && currentUser && profile && profile.id === currentUser.id) {
+      fetchBookmarks();
+    }
+  }, [activeTab, profile, currentUser]);
+
+  useEffect(() => {
+    // Set default active tab based on role when profile loads
+    if (profile) {
+      const isChef = profile.role === "CHEF";
+      const defaultTab = isChef ? 'recipes' : 'bookmarks';
+      setActiveTab(defaultTab);
+    }
+  }, [profile]);
+
   if (loading) return <LoadingSpinner fullScreen />;
   if (!profile) return null;
 
-  const isOwnProfile = currentUser && currentUser.id == id;
+  const isOwnProfile = currentUser && currentUser.id == profile.id;
   const isChef = profile?.role === "CHEF";
   const isFoodie = profile?.role === "FOODIE";
 

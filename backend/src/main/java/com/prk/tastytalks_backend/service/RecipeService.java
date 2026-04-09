@@ -42,7 +42,7 @@ public class RecipeService {
         recipeRepository.deleteById(id);
     }
 
-    public void likeRecipe(Long id){
+    public Recipe likeRecipe(Long id){
         Recipe recipe = getRecipeById(id);
         if (recipe != null) {
             if (recipe.getLikes() == null) {
@@ -50,8 +50,9 @@ public class RecipeService {
             }
             // For now, just add a dummy user id
             recipe.getLikes().add("user123");
-            recipeRepository.save(recipe);
+            return recipeRepository.save(recipe);
         }
+        return null;
     }
 
     public void rateRecipe(Long id, double rating){

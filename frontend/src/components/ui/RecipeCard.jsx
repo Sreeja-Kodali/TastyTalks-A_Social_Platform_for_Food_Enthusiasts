@@ -13,6 +13,13 @@ const RecipeCard = ({ recipe, onLikeUpdate }) => {
   );
   const [likesCount, setLikesCount] = React.useState(recipe.likes?.length || 0);
 
+  // Debug logging
+  React.useEffect(() => {
+    if (!recipe.id) {
+      console.warn('RecipeCard: Recipe has no ID', { recipe });
+    }
+  }, [recipe.id]);
+
   // Function to generate unique image based on recipe title
   const getRecipeImage = (title, category) => {
     if (recipe.image) return recipe.image;

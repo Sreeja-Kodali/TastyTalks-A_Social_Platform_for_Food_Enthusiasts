@@ -7,18 +7,25 @@ public class RecipeDTO {
     private String title;
     private String description;
     private String imageUrl;
+    private String image;
     private String chefName;
+    private UserDTO user;
     private String cuisine;
     private String category;
     private String difficulty;
     private List<String> ingredients;
     private List<String> instructions;
     private Integer likeCount;
+    private List<String> likes;
     private Double averageRating;
+    private Integer totalRatings;
+    private List<Double> ratings;
     private Integer prepTime;
     private Integer cookTime;
     private Integer servings;
     private Integer views;
+    private Boolean isFeatured;
+    private Boolean isTrending;
 
     public RecipeDTO() {}
 
@@ -171,5 +178,61 @@ public class RecipeDTO {
 
     public void setViews(Integer views) {
         this.views = views != null ? views : 0;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
+    public List<String> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<String> likes) {
+        this.likes = likes;
+    }
+
+    public List<Double> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Double> ratings) {
+        this.ratings = ratings;
+    }
+
+    public Integer getTotalRatings() {
+        return totalRatings;
+    }
+
+    public void setTotalRatings(Integer totalRatings) {
+        this.totalRatings = totalRatings;
+    }
+
+    public Boolean getIsFeatured() {
+        return isFeatured != null ? isFeatured : false;
+    }
+
+    public void setIsFeatured(Boolean isFeatured) {
+        this.isFeatured = isFeatured != null ? isFeatured : false;
+    }
+
+    public Boolean getIsTrending() {
+        return isTrending != null ? isTrending : false;
+    }
+
+    public void setIsTrending(Boolean isTrending) {
+        this.isTrending = isTrending != null ? isTrending : false;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

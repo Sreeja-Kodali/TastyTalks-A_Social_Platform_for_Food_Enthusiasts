@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, X, Upload, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { recipeAPI } from '../services/api';
 
 const PostRecipe = () => {
   const navigate = useNavigate();
-  const { user, isChef } = useAuth();
+  const { user, isChef, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -23,6 +24,20 @@ const PostRecipe = () => {
   });
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast.error('Please login to post recipes');
+      navigate('/login');
+      return;
+    }
+    
+    if (!isChef) {
+      toast.error('Only chefs can post recipes');
+      navigate('/');
+      return;
+    }
+  }, [isAuthenticated, isChef, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -75,13 +90,12 @@ const PostRecipe = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log("submit called");
     e.preventDefault();
-    
-    // Check if user is a CHEF
-    if (!isChef) {
-      toast.error('Only chefs can post recipes');
-      return;
-    }
+
+    console.log("Current user:", user);
+    console.log("isChef:", isChef);
+    console.log("User role:", user?.role);
 
     // Validation
     if (!formData.title || !formData.description || !formData.image) {
@@ -123,26 +137,44 @@ const PostRecipe = () => {
 
     console.log("TOKEN:", localStorage.getItem("token"));
     console.log("PAYLOAD:", JSON.stringify(payload, null, 2));
+    console.log("FORM DATA:", formData);
 
     try {
-      const response = await axios.post('http://localhost:8081/api/recipes', payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
+      const response = await recipeAPI.create(payload);
+      console.log("API RESPONSE:", response);
       toast.success('Recipe posted successfully!');
       navigate(`/recipes/${response.data.id}`);
     } catch (error) {
       console.error("Recipe submit failed:", error);
-      console.error("Response:", error.response?.data);
+      console.error("Response:", error.response);
+      console.error("Response data:", error.response?.data);
+      console.error("Response status:", error.response?.status);
 
-      toast.error(
-        error.response?.data?.message ||
-        JSON.stringify(error.response?.data) ||
-        'Failed to post recipe'
-      );
+      let errorMessage = 'Failed to post recipe';
+      
+      if (error.response) {
+        // Server responded with error status
+        if (error.response.status === 401) {
+          errorMessage = 'Authentication failed. Please login again.';
+        } else if (error.response.status === 403) {
+          errorMessage = 'You do not have permission to post recipes. Only chefs can post recipes.';
+        } else if (error.response.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else {
+          errorMessage = `Server error: ${error.response.status}`;
+        }
+      } else if (error.request) {
+        // Network error
+        errorMessage = 'Network error. Please check your connection and try again.';
+      } else {
+        // Other error
+        errorMessage = error.message || 'An unexpected error occurred';
+      }
+
+      alert(`Error: ${errorMessage}`);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

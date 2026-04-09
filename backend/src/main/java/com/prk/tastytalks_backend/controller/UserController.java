@@ -41,8 +41,21 @@ public class UserController {
     @GetMapping("/top-chefs")
     public Map<String, Object> getTopChefs(){
         List<UserDTO> chefs = userService.getAllUsers().stream()
-            .filter(user -> user.getRole() != null && 
-                   (user.getRole().equals("CHEF") || user.getRole().equals("ADMIN")))
+            .filter(user -> user.getRole() != null && user.getRole().equals("CHEF"))
+            .sorted((a, b) -> {
+                // Sort by total_points descending
+                int pointsCompare = Integer.compare(
+                    b.getTotalPoints() != null ? b.getTotalPoints() : 0,
+                    a.getTotalPoints() != null ? a.getTotalPoints() : 0
+                );
+                if (pointsCompare != 0) return pointsCompare;
+                
+                // Then by follower count descending
+                return Integer.compare(
+                    b.getFollowers() != null ? b.getFollowers().size() : 0,
+                    a.getFollowers() != null ? a.getFollowers().size() : 0
+                );
+            })
             .map(DTOMapper::toUserDTO)
             .collect(Collectors.toList());
         Map<String, Object> response = new HashMap<>();

@@ -4,6 +4,7 @@ import com.prk.tastytalks_backend.dto.UserDTO;
 import com.prk.tastytalks_backend.dto.RecipeDTO;
 import com.prk.tastytalks_backend.entity.User;
 import com.prk.tastytalks_backend.entity.Recipe;
+import java.util.ArrayList;
 
 public class DTOMapper {
 
@@ -53,18 +54,25 @@ public class DTOMapper {
         dto.setTitle(recipe.getTitle());
         dto.setDescription(recipe.getDescription());
         dto.setImageUrl(recipe.getImage());
+        dto.setImage(recipe.getImage());
         dto.setChefName(chefName);
+        dto.setUser(recipe.getUser() != null ? toUserDTO(recipe.getUser()) : null);
         dto.setCuisine(recipe.getCuisine());
         dto.setCategory(recipe.getCategory());
         dto.setDifficulty(recipe.getDifficulty());
-        dto.setIngredients(recipe.getIngredients());
-        dto.setInstructions(recipe.getInstructions());
+        dto.setIngredients(recipe.getIngredients() != null ? recipe.getIngredients() : new ArrayList<>());
+        dto.setInstructions(recipe.getInstructions() != null ? recipe.getInstructions() : new ArrayList<>());
         dto.setLikeCount(likeCount);
+        dto.setLikes(recipe.getLikes());
         dto.setAverageRating(averageRating);
+        dto.setTotalRatings(recipe.getRatings() != null ? recipe.getRatings().size() : 0);
+        dto.setRatings(recipe.getRatings());
         dto.setPrepTime(recipe.getPrepTime() != null ? recipe.getPrepTime() : 0);
         dto.setCookTime(recipe.getCookTime() != null ? recipe.getCookTime() : 0);
         dto.setServings(recipe.getServings() != null ? recipe.getServings() : 1);
         dto.setViews(recipe.getViews() != null ? recipe.getViews() : 0);
+        dto.setIsFeatured(false); // Will be populated by business logic if needed
+        dto.setIsTrending(false); // Will be populated by business logic if needed
 
         return dto;
     }

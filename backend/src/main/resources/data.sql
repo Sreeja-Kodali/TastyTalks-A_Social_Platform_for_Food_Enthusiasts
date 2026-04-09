@@ -1,0 +1,113 @@
+-- Insert basic users
+INSERT IGNORE INTO users (id, username, email, password, role, total_points, weekly_points) VALUES
+(1, 'testuser', 'test@example.com', '$2a$10$examplehashedpassword', 'FOODIE', 0, 0),
+(2, 'chefuser', 'chef@example.com', '$2a$10$examplehashedpassword', 'CHEF', 0, 0);
+
+-- Insert basic recipes
+INSERT IGNORE INTO recipes (id, title, description, category, cuisine, difficulty, prep_time, cook_time, servings, user_id, views) VALUES
+(13, 'Hyderabadi Biryani', 'Traditional Hyderabadi chicken biryani', 'Main Course', 'Indian', 'Medium', 30, 45, 4, 2, 0),
+(14, 'Paneer Butter Masala', 'Creamy paneer curry', 'Main Course', 'Indian', 'Easy', 15, 25, 4, 2, 0),
+(15, 'Mutton Curry', 'Spicy mutton curry', 'Main Course', 'Indian', 'Medium', 20, 40, 4, 2, 0),
+(16, 'Thai Fish Curry', 'Spicy Thai fish curry', 'Main Course', 'Thai', 'Medium', 15, 20, 4, 2, 0);
+
+-- Insert ingredients for recipes 13-16
+INSERT IGNORE INTO recipe_ingredients (recipe_id, value) VALUES
+(13, 'Chicken - 1 kg'),
+(13, 'Basmati rice - 500g'),
+(13, 'Onions - 3 large'),
+(13, 'Tomatoes - 2'),
+(13, 'Green chilies - 4'),
+(13, 'Ginger-garlic paste - 2 tbsp'),
+(13, 'Yogurt - 1 cup'),
+(13, 'Red chili powder - 1 tbsp'),
+(13, 'Turmeric powder - 1 tsp'),
+(13, 'Garam masala - 1 tbsp'),
+(13, 'Coriander leaves - 1/2 cup'),
+(13, 'Mint leaves - 1/2 cup'),
+(13, 'Oil - 4 tbsp'),
+(13, 'Salt - to taste'),
+
+(14, 'Paneer - 400g'),
+(14, 'Onions - 2'),
+(14, 'Tomatoes - 3'),
+(14, 'Green chilies - 2'),
+(14, 'Ginger - 1 inch'),
+(14, 'Garlic - 4 cloves'),
+(14, 'Cashews - 10-12'),
+(14, 'Cream - 1/2 cup'),
+(14, 'Butter - 2 tbsp'),
+(14, 'Cumin seeds - 1 tsp'),
+(14, 'Coriander powder - 1 tbsp'),
+(14, 'Turmeric powder - 1/2 tsp'),
+(14, 'Red chili powder - 1 tsp'),
+(14, 'Garam masala - 1 tsp'),
+(14, 'Kasuri methi - 1 tsp'),
+(14, 'Salt - to taste'),
+
+(15, 'Mutton - 500g'),
+(15, 'Onions - 3'),
+(15, 'Tomatoes - 2'),
+(15, 'Green chilies - 3'),
+(15, 'Ginger-garlic paste - 2 tbsp'),
+(15, 'Yogurt - 1/2 cup'),
+(15, 'Red chili powder - 1 tbsp'),
+(15, 'Turmeric powder - 1 tsp'),
+(15, 'Coriander powder - 1 tbsp'),
+(15, 'Garam masala - 1 tbsp'),
+(15, 'Cumin seeds - 1 tsp'),
+(15, 'Bay leaves - 2'),
+(15, 'Cinnamon - 1 inch'),
+(15, 'Cloves - 4'),
+(15, 'Cardamom - 4'),
+(15, 'Oil - 3 tbsp'),
+(15, 'Salt - to taste'),
+
+(16, 'Fish fillets - 500g'),
+(16, 'Coconut milk - 1 can'),
+(16, 'Red curry paste - 2 tbsp'),
+(16, 'Lemongrass - 2 stalks'),
+(16, 'Kaffir lime leaves - 4'),
+(16, 'Thai basil - 1/4 cup'),
+(16, 'Fish sauce - 2 tbsp'),
+(16, 'Palm sugar - 1 tbsp'),
+(16, 'Lime juice - 2 tbsp'),
+(16, 'Red chilies - 2'),
+(16, 'Garlic - 3 cloves'),
+(16, 'Ginger - 1 inch'),
+(16, 'Oil - 2 tbsp'),
+(16, 'Salt - to taste');
+
+-- Insert instructions for recipes 13-16
+INSERT IGNORE INTO recipe_instructions (recipe_id, value) VALUES
+(13, 'Marinate chicken with yogurt, red chili powder, turmeric, ginger-garlic paste, and salt for 1 hour'),
+(13, 'Soak basmati rice in water for 30 minutes'),
+(13, 'Heat oil in a large pot, add sliced onions and fry until golden brown'),
+(13, 'Add ginger-garlic paste, green chilies, and tomatoes, cook until oil separates'),
+(13, 'Add marinated chicken and cook for 10-15 minutes'),
+(13, 'Add soaked rice, water (double the rice quantity), and salt'),
+(13, 'Cover and cook on low heat until rice and chicken are done (about 20-25 minutes)'),
+(13, 'Garnish with coriander and mint leaves, serve hot'),
+
+(14, 'Cut paneer into cubes and fry until golden, set aside'),
+(14, 'Blend tomatoes, onions, green chilies, ginger, and garlic into a paste'),
+(14, 'Heat butter in a pan, add cumin seeds and the blended paste'),
+(14, 'Cook until oil separates, add all spices and cook for 2 minutes'),
+(14, 'Add cream and cashew paste, simmer for 5 minutes'),
+(14, 'Add fried paneer cubes and simmer for another 5 minutes'),
+(14, 'Garnish with kasuri methi and serve with naan or rice'),
+
+(15, 'Marinate mutton with yogurt, red chili powder, turmeric, and salt for 2 hours'),
+(15, 'Heat oil in a pressure cooker, add whole spices (cumin, bay leaves, cinnamon, cloves, cardamom)'),
+(15, 'Add sliced onions and fry until brown'),
+(15, 'Add ginger-garlic paste, green chilies, and tomatoes, cook until oil separates'),
+(15, 'Add marinated mutton and cook for 10 minutes'),
+(15, 'Add water and pressure cook for 4-5 whistles'),
+(15, 'Once pressure releases, add garam masala and simmer until gravy thickens'),
+(15, 'Serve hot with rice or roti'),
+
+(16, 'Heat oil in a pan, add garlic, ginger, and red chilies'),
+(16, 'Add red curry paste and cook for 2 minutes'),
+(16, 'Add coconut milk, lemongrass, and kaffir lime leaves'),
+(16, 'Bring to simmer, add fish fillets and cook for 8-10 minutes'),
+(16, 'Add fish sauce, palm sugar, and lime juice'),
+(16, 'Garnish with Thai basil and serve with jasmine rice');

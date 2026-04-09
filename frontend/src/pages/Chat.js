@@ -8,6 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 import toast from 'react-hot-toast';
 
 const Chat = () => {
+  // Declare all hooks and state first, before any usage
   const { user } = useAuth();
   const { socket, isConnected } = useSocket();
   const [messages, setMessages] = useState([]);
@@ -16,6 +17,8 @@ const Chat = () => {
   const [typing, setTyping] = useState(null);
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+
+  console.log("Chat component mounted - user:", user);
 
   useEffect(() => {
     fetchMessages();

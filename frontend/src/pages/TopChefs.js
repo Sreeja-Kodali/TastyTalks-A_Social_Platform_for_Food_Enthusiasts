@@ -16,6 +16,7 @@ const TopChefs = () => {
   const fetchTopChefs = async () => {
     try {
       const response = await userAPI.getTopChefs();
+      console.log(chefs);
       setChefs(response.data.data);
     } catch (error) {
       console.error('Error fetching top chefs:', error);

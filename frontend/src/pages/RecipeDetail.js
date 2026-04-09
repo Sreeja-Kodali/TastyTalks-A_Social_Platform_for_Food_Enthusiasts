@@ -82,16 +82,29 @@ const RecipeDetail = () => {
   const fetchRecipe = async () => {
     try {
       const response = await recipeAPI.getById(id);
-      setRecipe(response.data.data);
       
-      // Check if user has rated
-      if (user) {
-        const rating = response.data.data.ratings.find(r => r.user.id === user.id);
+      if (!response.data || !response.data.data) {
+        console.error('Invalid response structure:', response);
+        toast.error('Invalid recipe data received');
+        navigate('/recipes');
+        return;
+      }
+      
+      const recipe = response.data.data;
+      setRecipe(recipe);
+      
+      // Check if user has rated - safely handle missing ratings
+      if (user && recipe.ratings && Array.isArray(recipe.ratings)) {
+        const rating = recipe.ratings.find(r => r.user && r.user.id === user.id);
         if (rating) setUserRating(rating.rating);
       }
     } catch (error) {
       console.error('Error fetching recipe:', error);
-      toast.error('Recipe not found');
+      console.error('Error status:', error.response?.status);
+      console.error('Error message:', error.response?.data?.message || error.message);
+      
+      const errorMessage = error.response?.data?.message || 'Recipe not found';
+      toast.error(errorMessage);
       navigate('/recipes');
     } finally {
       setLoading(false);
@@ -176,8 +189,11 @@ const RecipeDetail = () => {
   if (loading) return <LoadingSpinner fullScreen />;
   if (!recipe) return null;
 
-  const isOwner = user && recipe.chef._id === user._id;
-  const isLiked = user && recipe.likes.includes(user._id);
+  const ingredients = recipe.ingredients || [];
+  const instructions = recipe.instructions || [];
+
+  const isOwner = user && recipe.user && recipe.user.id === user.id;
+  const isLiked = user && recipe.likes && recipe.likes.includes(String(user.id));
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
@@ -227,12 +243,12 @@ const RecipeDetail = () => {
                       size={24} 
                       className={isLiked ? 'fill-primary-500 text-primary-500' : 'text-gray-600 dark:text-gray-400'}
                     />
-                    <span className="text-lg font-semibold">{recipe.likes.length}</span>
+                    <span className="text-lg font-semibold">{recipe.likes ? recipe.likes.length : 0}</span>
                   </button>
                   <div className="flex items-center space-x-2">
                     <Star size={24} className="fill-yellow-400 text-yellow-400" />
                     <span className="text-lg font-semibold">{recipe.averageRating || 0}</span>
-                    <span className="text-gray-600 dark:text-gray-400">({recipe.totalRatings})</span>
+                    <span className="text-gray-600 dark:text-gray-400">({recipe.totalRatings || 0})</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
                     <Eye size={24} />
@@ -315,14 +331,18 @@ const RecipeDetail = () => {
                 Ingredients
               </h2>
               <ul className="space-y-3">
-                {recipe.ingredients.map((ingredient, index) => (
-                  <li key={index} className="flex items-start space-x-3">
-                    <span className="text-primary-500 mt-1">•</span>
-                    <span className="text-gray-700 dark:text-gray-300">
-                      <span className="font-semibold">{ingredient.quantity}</span> {ingredient.name}
-                    </span>
-                  </li>
-                ))}
+                {ingredients && ingredients.length > 0 ? (
+                  ingredients.map((ingredient, index) => (
+                    <li key={index} className="flex items-start space-x-3">
+                      <span className="text-primary-500 mt-1">•</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {ingredient}
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <p className="text-gray-600 dark:text-gray-400">No ingredients available</p>
+                )}
               </ul>
             </div>
 
@@ -332,16 +352,20 @@ const RecipeDetail = () => {
                 Instructions
               </h2>
               <ol className="space-y-4">
-                {recipe.instructions.sort((a, b) => a.step - b.step).map((instruction) => (
-                  <li key={instruction.step} className="flex space-x-4">
-                    <span className="flex-shrink-0 w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center font-semibold">
-                      {instruction.step}
-                    </span>
-                    <p className="text-gray-700 dark:text-gray-300 pt-1">
-                      {instruction.description}
-                    </p>
-                  </li>
-                ))}
+                {instructions && instructions.length > 0 ? (
+                  instructions.map((instruction, index) => (
+                    <li key={index} className="flex space-x-4">
+                      <span className="flex-shrink-0 w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center font-semibold">
+                        {index + 1}
+                      </span>
+                      <p className="text-gray-700 dark:text-gray-300 pt-1">
+                        {instruction}
+                      </p>
+                    </li>
+                  ))
+                ) : (
+                  <p className="text-gray-600 dark:text-gray-400">No instructions available</p>
+                )}
               </ol>
             </div>
 
@@ -357,8 +381,8 @@ const RecipeDetail = () => {
                 <form onSubmit={handleAddComment} className="mb-6">
                   <div className="flex space-x-3">
                     <img 
-                      src={user.avatar} 
-                      alt={user.username}
+                      src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || 'User')}`}
+                      alt={user?.username || 'User'}
                       className="w-10 h-10 rounded-full"
                     />
                     <div className="flex-1">
@@ -383,21 +407,21 @@ const RecipeDetail = () => {
 
               {/* Comments List */}
               <div className="space-y-4">
-                {comments.map((comment) => (
-                  <div key={comment._id} className="flex space-x-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                {comments.map((comment, index) => (
+                  <div key={comment._id || comment.id || index} className="flex space-x-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
                     <img 
-                      src={comment.user.avatar} 
-                      alt={comment.user.username}
+                      src={comment.user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user?.username || 'User')}`}
+                      alt={comment.user?.username || 'User'}
                       className="w-10 h-10 rounded-full"
                     />
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
                         <span className="font-semibold text-gray-900 dark:text-white">
-                          {comment.user.username}
+                          {comment.user?.username || 'Unknown User'}
                         </span>
-                        {comment.user.role === 'Chef' && <span>👨‍🍳</span>}
+                        {comment.user?.role === 'Chef' && <span>👨‍🍳</span>}
                         <span className="text-sm text-gray-500">
-                          {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                          {comment.createdAt ? formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true }) : 'Unknown time'}
                         </span>
                       </div>
                       <p className="text-gray-700 dark:text-gray-300">{comment.text}</p>
@@ -415,29 +439,29 @@ const RecipeDetail = () => {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Recipe by
               </h3>
-              <Link to={`/profile/${recipe.chef._id}`} className="block group">
+              <Link to={`/profile/${recipe.user && recipe.user.id}`} className="block group">
                 <div className="flex items-center space-x-3 mb-4">
                   <img 
-                    src={recipe.chef.avatar} 
-                    alt={recipe.chef.username}
+                    src={recipe.user?.avatar || recipe.user?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(recipe.user?.username || 'Chef')}`}
+                    alt={recipe.user?.username || 'Chef'}
                     className="w-16 h-16 rounded-full border-4 border-primary-500"
                   />
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-500 transition">
-                      {recipe.chef.username}
+                      {recipe.user?.username || 'Unknown Chef'}
                     </h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {recipe.chef.role}
+                      {recipe.user?.role || 'Chef'}
                     </p>
                   </div>
                 </div>
-                {recipe.chef.bio && (
+                {recipe.user && recipe.user.bio && (
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                    {recipe.chef.bio}
+                    {recipe.user.bio}
                   </p>
                 )}
                 <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-                  <span>{recipe.chef.followers?.length || 0} Followers</span>
+                  <span>{recipe.user && recipe.user.followersCount || 0} Followers</span>
                 </div>
               </Link>
             </div>

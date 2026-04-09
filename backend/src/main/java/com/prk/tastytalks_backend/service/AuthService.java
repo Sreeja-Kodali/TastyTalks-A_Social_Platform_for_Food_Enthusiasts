@@ -1,8 +1,10 @@
 package com.prk.tastytalks_backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import com.prk.tastytalks_backend.entity.User;
 import com.prk.tastytalks_backend.entity.Role;
 import com.prk.tastytalks_backend.repository.UserRepository;
@@ -19,7 +21,7 @@ public class AuthService {
     public User register(String username, String email, String password, String roleStr){
         // Check if email already exists
         if (userRepository.findByEmail(email) != null) {
-            throw new RuntimeException("Email already exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
 
         User user = new User();
@@ -53,7 +55,7 @@ public class AuthService {
         System.out.println("Password matches: " + passwordMatches);
 
         if (user == null || !passwordMatches) {
-            throw new RuntimeException("Invalid email or password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
         return user;

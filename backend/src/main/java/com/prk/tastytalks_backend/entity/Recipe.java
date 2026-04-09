@@ -2,6 +2,11 @@ package com.prk.tastytalks_backend.entity;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.ArrayList;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name="recipes")
@@ -36,12 +41,12 @@ public class Recipe {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
     @Column(name = "value")
-    private List<String> ingredients;
+    private List<String> ingredients = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "recipe_instructions", joinColumns = @JoinColumn(name = "recipe_id"))
     @Column(name = "value")
-    private List<String> instructions;
+    private List<String> instructions = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")

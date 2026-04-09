@@ -1,20 +1,14 @@
-MERGE INTO users (id, username, email, password, role, total_points, weekly_points)
-KEY(id)
-VALUES
+INSERT IGNORE INTO users (id, username, email, password, role, total_points, weekly_points) VALUES
 (1, 'testuser', 'test@example.com', '$2a$10$examplehashedpassword', 'FOODIE', 0, 0),
 (2, 'chefuser', 'chef@example.com', '$2a$10$examplehashedpassword', 'CHEF', 0, 0);
 
-MERGE INTO recipes (id, title, description, category, cuisine, difficulty, prep_time, cook_time, servings, user_id, views)
-KEY(id)
-VALUES
+INSERT IGNORE INTO recipes (id, title, description, category, cuisine, difficulty, prep_time, cook_time, servings, user_id, views) VALUES
 (13, 'Hyderabadi Biryani', 'Traditional Hyderabadi chicken biryani', 'Main Course', 'Indian', 'Medium', 30, 45, 4, 2, 0),
 (14, 'Paneer Butter Masala', 'Creamy paneer curry', 'Main Course', 'Indian', 'Easy', 15, 25, 4, 2, 0),
 (15, 'Mutton Curry', 'Spicy mutton curry', 'Main Course', 'Indian', 'Medium', 20, 40, 4, 2, 0),
 (16, 'Thai Fish Curry', 'Spicy Thai fish curry', 'Main Course', 'Thai', 'Medium', 15, 20, 4, 2, 0);
 
-MERGE INTO recipe_ingredients (recipe_id, value)
-KEY(recipe_id, value)
-VALUES
+INSERT IGNORE INTO recipe_ingredients (recipe_id, `value`) VALUES
 (13, 'Chicken - 1 kg'),
 (13, 'Basmati rice - 500g'),
 (13, 'Onions - 3 large'),
@@ -29,6 +23,7 @@ VALUES
 (13, 'Mint leaves - 1/2 cup'),
 (13, 'Oil - 4 tbsp'),
 (13, 'Salt - to taste'),
+
 (14, 'Paneer - 400g'),
 (14, 'Onions - 2'),
 (14, 'Tomatoes - 3'),
@@ -45,6 +40,7 @@ VALUES
 (14, 'Garam masala - 1 tsp'),
 (14, 'Kasuri methi - 1 tsp'),
 (14, 'Salt - to taste'),
+
 (15, 'Mutton - 500g'),
 (15, 'Onions - 3'),
 (15, 'Tomatoes - 2'),
@@ -62,6 +58,7 @@ VALUES
 (15, 'Cardamom - 4'),
 (15, 'Oil - 3 tbsp'),
 (15, 'Salt - to taste'),
+
 (16, 'Fish fillets - 500g'),
 (16, 'Coconut milk - 1 can'),
 (16, 'Red curry paste - 2 tbsp'),
@@ -77,9 +74,7 @@ VALUES
 (16, 'Oil - 2 tbsp'),
 (16, 'Salt - to taste');
 
-MERGE INTO recipe_instructions (recipe_id, value)
-KEY(recipe_id, value)
-VALUES
+INSERT IGNORE INTO recipe_instructions (recipe_id, `value`) VALUES
 (13, 'Marinate chicken with yogurt, red chili powder, turmeric, ginger-garlic paste, and salt for 1 hour'),
 (13, 'Soak basmati rice in water for 30 minutes'),
 (13, 'Heat oil in a large pot, add sliced onions and fry until golden brown'),
@@ -88,6 +83,7 @@ VALUES
 (13, 'Add soaked rice, water (double the rice quantity), and salt'),
 (13, 'Cover and cook on low heat until rice and chicken are done (about 20-25 minutes)'),
 (13, 'Garnish with coriander and mint leaves, serve hot'),
+
 (14, 'Cut paneer into cubes and fry until golden, set aside'),
 (14, 'Blend tomatoes, onions, green chilies, ginger, and garlic into a paste'),
 (14, 'Heat butter in a pan, add cumin seeds and the blended paste'),
@@ -95,6 +91,7 @@ VALUES
 (14, 'Add cream and cashew paste, simmer for 5 minutes'),
 (14, 'Add fried paneer cubes and simmer for another 5 minutes'),
 (14, 'Garnish with kasuri methi and serve with naan or rice'),
+
 (15, 'Marinate mutton with yogurt, red chili powder, turmeric, and salt for 2 hours'),
 (15, 'Heat oil in a pressure cooker, add whole spices (cumin, bay leaves, cinnamon, cloves, cardamom)'),
 (15, 'Add sliced onions and fry until brown'),
@@ -103,6 +100,7 @@ VALUES
 (15, 'Add water and pressure cook for 4-5 whistles'),
 (15, 'Once pressure releases, add garam masala and simmer until gravy thickens'),
 (15, 'Serve hot with rice or roti'),
+
 (16, 'Heat oil in a pan, add garlic, ginger, and red chilies'),
 (16, 'Add red curry paste and cook for 2 minutes'),
 (16, 'Add coconut milk, lemongrass, and kaffir lime leaves'),

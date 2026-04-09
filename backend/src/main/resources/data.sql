@@ -1,14 +1,14 @@
-INSERT IGNORE INTO users (id, username, email, password, role, total_points, weekly_points) VALUES
+INSERT INTO users (id, username, email, password, role, total_points, weekly_points) VALUES
 (1, 'testuser', 'test@example.com', '$2a$10$examplehashedpassword', 'FOODIE', 0, 0),
 (2, 'chefuser', 'chef@example.com', '$2a$10$examplehashedpassword', 'CHEF', 0, 0);
 
-INSERT IGNORE INTO recipes (id, title, description, category, cuisine, difficulty, prep_time, cook_time, servings, user_id, views) VALUES
+INSERT INTO recipes (id, title, description, category, cuisine, difficulty, prep_time, cook_time, servings, user_id, views) VALUES
 (13, 'Hyderabadi Biryani', 'Traditional Hyderabadi chicken biryani', 'Main Course', 'Indian', 'Medium', 30, 45, 4, 2, 0),
 (14, 'Paneer Butter Masala', 'Creamy paneer curry', 'Main Course', 'Indian', 'Easy', 15, 25, 4, 2, 0),
 (15, 'Mutton Curry', 'Spicy mutton curry', 'Main Course', 'Indian', 'Medium', 20, 40, 4, 2, 0),
 (16, 'Thai Fish Curry', 'Spicy Thai fish curry', 'Main Course', 'Thai', 'Medium', 15, 20, 4, 2, 0);
 
-INSERT IGNORE INTO recipe_ingredients (recipe_id, `value`) VALUES
+INSERT INTO recipe_ingredients (recipe_id, "VALUE") VALUES
 (13, 'Chicken - 1 kg'),
 (13, 'Basmati rice - 500g'),
 (13, 'Onions - 3 large'),
@@ -74,7 +74,7 @@ INSERT IGNORE INTO recipe_ingredients (recipe_id, `value`) VALUES
 (16, 'Oil - 2 tbsp'),
 (16, 'Salt - to taste');
 
-INSERT IGNORE INTO recipe_instructions (recipe_id, `value`) VALUES
+INSERT INTO recipe_instructions (recipe_id, "VALUE") VALUES
 (13, 'Marinate chicken with yogurt, red chili powder, turmeric, ginger-garlic paste, and salt for 1 hour'),
 (13, 'Soak basmati rice in water for 30 minutes'),
 (13, 'Heat oil in a large pot, add sliced onions and fry until golden brown'),

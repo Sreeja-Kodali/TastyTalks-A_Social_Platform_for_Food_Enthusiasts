@@ -26,8 +26,14 @@ api.interceptors.request.use(
 
 // Authentication APIs
 export const authAPI = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data),
+  register: (data) => {
+    console.log('authAPI register URL:', `${API_URL}/auth/register`);
+    return api.post('/auth/register', data);
+  },
+  login: (data) => {
+    console.log('authAPI login URL:', `${API_URL}/auth/login`);
+    return api.post('/auth/login', data);
+  },
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

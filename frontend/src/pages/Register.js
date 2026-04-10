@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import API_URL from '../config/apiConfig';
 import { User, Mail, Lock, UserPlus } from 'lucide-react';
 
 const Register = () => {
@@ -38,28 +39,31 @@ const Register = () => {
 
     setLoading(true);
 
-    try {
-      console.log("REGISTER PAYLOAD:", {
-        username: formData.username.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-        role: formData.role
-      });
+    console.log('REACT_APP_API_URL =', process.env.REACT_APP_API_URL);
+    console.log('API_URL =', API_URL);
+    console.log('Signup URL =', `${API_URL}/auth/register`);
+    console.log("REGISTER PAYLOAD:", {
+      username: formData.username.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+      role: formData.role
+    });
 
-      await register(formData.username.trim(), formData.email.trim(), formData.password, formData.role);
+    await register(formData.username.trim(), formData.email.trim(), formData.password, formData.role);
 
       console.log("REGISTER RESPONSE: success");
 
       toast.success('Account created successfully!');
       navigate('/login');
     } catch (error) {
-      console.error("REGISTER ERROR:", error.response?.data || error);
+      console.log("Full error:", error);
+      console.log("Response:", error.response);
+      console.log("Request:", error.request);
 
       toast.error(
-        error.response?.data?.message ||
-        error.response?.data ||
-        error.message ||
-        "Registration failed"
+        error?.response?.data?.message ||
+        error?.message ||
+        "Network Error"
       );
     } finally {
       setLoading(false);

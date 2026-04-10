@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import API_URL from '../config/apiConfig';
 import { Mail, Lock, LogIn } from 'lucide-react';
 
 const Login = () => {
@@ -32,6 +33,10 @@ const Login = () => {
 
     setLoading(true);
 
+    console.log('REACT_APP_API_URL =', process.env.REACT_APP_API_URL);
+    console.log('API_URL =', API_URL);
+    console.log('Login URL =', `${API_URL}/auth/login`);
+
     try {
       const user = await login(formData.email.trim(), formData.password);
 
@@ -46,22 +51,20 @@ const Login = () => {
         navigate("/");
       }
     } catch (error) {
-      console.error("LOGIN ERROR:", error);
-      console.error("LOGIN RESPONSE:", error.response?.data);
+      console.log("Full error:", error);
+      console.log("Response:", error.response);
+      console.log("Request:", error.request);
 
       alert(
-        JSON.stringify(
-          error.response?.data || error.message || "Login failed",
-          null,
-          2
-        )
+        error?.response?.data?.message ||
+        error?.message ||
+        "Network Error"
       );
 
       toast.error(
-        error.response?.data?.message ||
-        error.response?.data ||
-        error.message ||
-        "Login failed"
+        error?.response?.data?.message ||
+        error?.message ||
+        "Network Error"
       );
     } finally {
       setLoading(false);

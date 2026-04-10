@@ -49,9 +49,10 @@ const Register = () => {
       role: formData.role
     });
 
-    await register(formData.username.trim(), formData.email.trim(), formData.password, formData.role);
+    try {
+      const response = await register(formData.username.trim(), formData.email.trim(), formData.password, formData.role);
 
-      console.log("REGISTER RESPONSE: success");
+      console.log("REGISTER RESPONSE: success", response);
 
       toast.success('Account created successfully!');
       navigate('/login');

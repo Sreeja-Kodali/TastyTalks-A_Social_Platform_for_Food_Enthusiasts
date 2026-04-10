@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, LogIn } from 'lucide-react';
@@ -13,8 +12,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
-  const API_BASE_URL = "http://localhost:8081";
-  // const API_BASE_URL = "https://tastytalks-a-social-platform-for-food.onrender.com";
 
   const handleChange = (e) => {
     setFormData({

@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { API_BASE_URL } from '../utils/constants';
+import API_URL from '../config/apiConfig';
 
 const api = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -26,16 +26,8 @@ api.interceptors.request.use(
 
 // Authentication APIs
 export const authAPI = {
-  register: (data) => axios.post(`${API_BASE_URL}/auth/register`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }),
-  login: (data) => axios.post(`${API_BASE_URL}/auth/login`, data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }),
+  register: (data) => api.post('/auth/register', data),
+  login: (data) => api.post('/auth/login', data),
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

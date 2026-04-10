@@ -19,7 +19,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws/chat")
-                .setAllowedOrigins("http://localhost:3000", "http://localhost:8080")
+                .setAllowedOrigins(
+                    "http://localhost:3000",
+                    "http://localhost:8080",
+                    "https://tastytalks-a-social-platform-for-food-u346.onrender.com"
+                )
                 .withSockJS();
     }
 }

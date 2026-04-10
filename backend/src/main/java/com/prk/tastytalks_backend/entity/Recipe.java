@@ -39,13 +39,19 @@ public class Recipe {
     private Integer views = 0;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
-    @Column(name = "value")
+    @CollectionTable(
+        name = "recipe_ingredients",
+        joinColumns = @JoinColumn(name = "recipe_id")
+    )
+    @Column(name = "ingredient_value")
     private List<String> ingredients = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "recipe_instructions", joinColumns = @JoinColumn(name = "recipe_id"))
-    @Column(name = "value")
+    @CollectionTable(
+        name = "recipe_instructions",
+        joinColumns = @JoinColumn(name = "recipe_id")
+    )
+    @Column(name = "instruction_value")
     private List<String> instructions = new ArrayList<>();
 
     @ManyToOne
